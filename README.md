@@ -1,8 +1,10 @@
-```txt
+# kosukesaigusa.com
+
+```sh
 npm install
 npm run dev
 ```
 
-```txt
+```sh
 npm run deploy
 ```
