@@ -11,6 +11,7 @@ const n2m = new NotionToMarkdown({ notionClient })
 
 const properties: NotionProperty[] = [
   { name: 'title', type: 'title' },
+  { name: 'coverImage', type: 'files' },
   { name: 'description', type: 'rich_text' },
   { name: 'publishedAt', type: 'date' },
   { name: 'isDraft', type: 'checkbox' },
@@ -27,6 +28,8 @@ const generateMarkdowns = async () => {
     const extractedProperties = properties.map((property) => {
       if (notionStringProperties.includes(property.type)) {
         return extractStringValue(response, property)
+      } else if (notionFileProperties.includes(property.type)) {
+        return extractFileValue(response, property)
       } else if (notionDateProperties.includes(property.type)) {
         return extractDateValue(response, property).toISOString().split('T')[0]
       } else if (notionBooleanProperties.includes(property.type)) {
@@ -59,6 +62,10 @@ const notionStringValue = {
   rich_text: 'rich_text',
 } as const
 
+const notionFileValue = {
+  files: 'files',
+} as const
+
 const notionDateValue = {
   date: 'date',
 } as const
@@ -69,11 +76,15 @@ const notionBooleanValue = {
 
 type NotionValueType =
   | NotionStringValueType
+  | NotionFileValueType
   | NotionDateValueType
   | NotionBooleanValueType
 
 type NotionStringValueType =
   (typeof notionStringValue)[keyof typeof notionStringValue]
+
+type NotionFileValueType =
+  (typeof notionFileValue)[keyof typeof notionFileValue]
 
 type NotionDateValueType =
   (typeof notionDateValue)[keyof typeof notionDateValue]
@@ -82,6 +93,10 @@ type NotionBooleanValueType =
   (typeof notionBooleanValue)[keyof typeof notionBooleanValue]
 
 const notionStringProperties = Object.values(notionStringValue).map(
+  (e) => e as string
+)
+
+const notionFileProperties = Object.values(notionFileValue).map(
   (e) => e as string
 )
 
@@ -101,6 +116,11 @@ type NotionTitle = {
 type NotionRichText = {
   type: 'rich_text'
   rich_text: { plain_text: string }[]
+}
+
+type NotionFile = {
+  type: 'files'
+  files: { file: { url: string } }[]
 }
 
 type NotionDate = {
@@ -129,6 +149,17 @@ function extractStringValue(
   } else if (property.type === 'rich_text') {
     return (response.properties[key] as NotionRichText).rich_text[0]
       .plain_text as string
+  }
+  throw new Error('Invalid property type')
+}
+
+function extractFileValue(
+  response: PageObjectResponse,
+  property: NotionProperty
+): string {
+  const key = property.name
+  if (property.type === 'files') {
+    return (response.properties[key] as NotionFile).files[0].file.url as string
   }
   throw new Error('Invalid property type')
 }
