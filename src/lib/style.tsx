@@ -61,11 +61,15 @@ export const globalCSS = css`
   pre > code {
     all: unset;
   }
+  .expressive-code {
+    margin-bottom: 1rem;
+  }
   blockquote {
     border: 1px solid #999;
     color: #222;
-    padding: 2px 0px 2px 20px;
+    padding: 2px 20px 2px 20px;
     margin: 0px;
+    margin-bottom: 1rem;
     font-style: italic;
   }
 `
