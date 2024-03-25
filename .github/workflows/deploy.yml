@@ -1,10 +1,6 @@
 name: Deploy to Cloudflare Pages
 
-on:
-  workflow_dispatch:
-  schedule:
-    # 毎日午前 0 時に実行する
-    - cron: '0 0 * * *'
+on: [push]
 
 jobs:
   deploy:
