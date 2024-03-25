@@ -7,7 +7,7 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  export-markdown:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
