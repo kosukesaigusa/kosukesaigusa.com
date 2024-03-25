@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 毎日午前 0 時に実行する
+    - cron: '0 0 * * *'
+
+jobs:
+  export-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Generate markdowns
+        env:
+          NOTION_AUTH: ${{ secrets.NOTION_API_KEY }}
+          DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: |
+          bun i
+          bun run generate
+        working-directory: ./tools
+
+      - name: Deploy to Cloudflare Pages
+        run: |
+          bun i
+          bun run deploy
+        working-directory: .
