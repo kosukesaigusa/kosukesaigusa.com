@@ -32,6 +32,7 @@ jobs:
         working-directory: .
 
       - name: Publish to Cloudflare Pages
+        id: publish_to_cloudflare_pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -41,3 +42,18 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
           wranglerVersion: '3'
+
+      - name: Add publish URL as commit status
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const sha = context.payload.pull_request?.head.sha ?? context.sha;
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              context: 'Cloudflare Pages',
+              description: 'Cloudflare Pages deployment',
+              state: 'success',
+              sha,
+              target_url: "${{ steps.publish_to_cloudflare_pages.outputs.url }}",
+            });
