@@ -34,9 +34,3 @@ jobs:
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
-
-      - name: Deploy to Cloudflare Pages
-        run: |
-          bun i
-          bun run deploy
-        working-directory: .
