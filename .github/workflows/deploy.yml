@@ -26,7 +26,9 @@ jobs:
         working-directory: ./tools
 
       - name: Build
-        run: bun run build
+        run: |
+          bun i
+          bun run build
         working-directory: .
 
       - name: Publish to Cloudflare Pages
