@@ -18,8 +18,8 @@ jobs:
 
       - name: Generate markdowns
         env:
-          NOTION_AUTH: ${{ secrets.NOTION_API_KEY }}
-          DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: |
           bun i
           bun run generate
