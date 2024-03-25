@@ -66,7 +66,6 @@ app.get('/', (c) => {
   return c.render(
     <Layout metadata={metadata}>
       <div class={postListCSS}>
-        <h2>{siteName}</h2>
         <h2>最新の記事</h2>
         <ul>
           {posts
@@ -101,7 +100,7 @@ app.get(
     metadata = {
       description: post.description,
       ogImage: post.coverImage,
-      title: siteName + ' - 記事一覧',
+      title: siteName + ` - ${post.title}`,
       url: baseURL + '/posts/' + post.slug,
     }
     return c.render(
