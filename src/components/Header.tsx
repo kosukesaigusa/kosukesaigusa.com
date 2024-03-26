@@ -40,6 +40,13 @@ export const Header: FC = (props) => {
         >
           GitHub
         </a>
+        <a
+          href="https://x.com/kosukesaigusa"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          X
+        </a>
       </nav>
     </header>
   )
