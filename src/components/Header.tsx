@@ -33,7 +33,13 @@ export const Header: FC = (props) => {
         <a className={path === '/' ? 'active' : ''} href="/">
           Home
         </a>
-        <a href="https://github.com/kosukesaigusa">GitHub</a>
+        <a
+          href="https://github.com/kosukesaigusa"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </a>
       </nav>
     </header>
   )
