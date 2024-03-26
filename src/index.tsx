@@ -150,7 +150,6 @@ app.get(
       title: siteName + ` - ${post.title}`,
       url: baseURL + '/posts/' + post.slug,
     }
-    console.log(`🎅 ${post.body}`)
     return c.render(
       <Layout metadata={metadata}>
         <h1>{post.title}</h1>
