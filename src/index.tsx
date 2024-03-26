@@ -6,8 +6,16 @@ import { serveStatic } from '@hono/node-server/serve-static'
 import { Layout } from './components/Layout'
 import { baseURL, siteName } from './lib/constants'
 import { jsxRenderer } from 'hono/jsx-renderer'
+import { getFeaturedTalk, getTalks } from './lib/talk'
+import { getAbout } from './lib/about'
 
 const app = new Hono()
+
+const about = await getAbout()
+
+const featuredTalk = await getFeaturedTalk()
+
+const talks = await getTalks()
 
 const posts = await getPosts()
 
@@ -66,6 +74,45 @@ app.get('/', (c) => {
   return c.render(
     <Layout metadata={metadata}>
       <div class={postListCSS}>
+        <h2>このページについて</h2>
+        <div dangerouslySetInnerHTML={{ __html: about }}></div>
+        {/* <a href="/contact">お仕事の依頼はこちら</a> */}
+        <h2>登壇など</h2>
+        {featuredTalk && (
+          <div>
+            <h3>
+              <a
+                href={featuredTalk.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {featuredTalk.title}
+              </a>
+            </h3>
+            <div>
+              <a
+                href={featuredTalk.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={featuredTalk.imageUrl} alt={featuredTalk.title} />
+              </a>
+            </div>
+            <time>{featuredTalk.date}</time>
+            <p>{featuredTalk.body}</p>
+          </div>
+        )}
+        <h3>その他の登壇やコミュニティ活動</h3>
+        <ul>
+          {talks.map((talk) => (
+            <li>
+              <time>{talk.date}</time>
+              <a href={talk.link} target="_blank" rel="noopener noreferrer">
+                {talk.title}
+              </a>
+            </li>
+          ))}
+        </ul>
         <h2>最新の記事</h2>
         <ul>
           {posts
@@ -103,6 +150,7 @@ app.get(
       title: siteName + ` - ${post.title}`,
       url: baseURL + '/posts/' + post.slug,
     }
+    console.log(`🎅 ${post.body}`)
     return c.render(
       <Layout metadata={metadata}>
         <h1>{post.title}</h1>
@@ -113,6 +161,22 @@ app.get(
     )
   }
 )
+
+// app.get('/contact', async (c) => {
+//   metadata = {
+//     description: 'お仕事の依頼',
+//     ogImage: '/icon.jpg',
+//     title: siteName + ' - お仕事の依頼',
+//     url: baseURL + '/contact',
+//   }
+//   return c.render(
+//     <Layout metadata={metadata}>
+//       <h1>title</h1>
+//       <hr />
+//       <div dangerouslySetInnerHTML={{ __html: post.body }}></div>
+//     </Layout>
+//   )
+// })
 
 app.get('/404', (c) => c.notFound())
 
