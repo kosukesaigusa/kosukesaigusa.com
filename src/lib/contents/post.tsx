@@ -9,7 +9,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkExtractFrontmatter from 'remark-extract-frontmatter'
 import remarkExpressiveCode from 'remark-expressive-code'
 import yaml from 'yaml'
-import { postsDir } from './constants'
+import { postsDir } from '../constants'
 
 type Post = {
   slug: string

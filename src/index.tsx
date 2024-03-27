@@ -1,13 +1,13 @@
 import { Hono } from 'hono'
 import { ssgParams } from 'hono/ssg'
 import { css } from 'hono/css'
-import { getPosts } from './lib/post'
+import { getPosts } from './lib/contents/post'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Layout } from './components/Layout'
 import { baseURL, siteName } from './lib/constants'
 import { jsxRenderer } from 'hono/jsx-renderer'
-import { getFeaturedTalk, getTalks } from './lib/talk'
-import { getAbout } from './lib/about'
+import { getFeaturedTalk, getTalks } from './lib/contents/talk'
+import { getAbout } from './lib/contents/about'
 
 const app = new Hono()
 

@@ -15,4 +15,4 @@ bun.lockb
 .env
 
 # Generated contents
-content/
+/contents/
