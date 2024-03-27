@@ -1,0 +1,9 @@
+name = "r2-image-worker"
+workers_dev = true
+
+compatibility_date = "2022-05-12"
+
+[[r2_buckets]]
+binding = 'BUCKET'
+bucket_name = 'images'
+preview_bucket_name = 'images'

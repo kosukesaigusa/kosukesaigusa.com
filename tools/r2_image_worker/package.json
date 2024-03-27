@@ -1,0 +1,17 @@
+{
+  "name": "r2-image-worker",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "wrangler dev ./src/index.ts",
+    "deploy": "wrangler deploy --minify ./src/index.ts"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "hono": "^3.3.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.10.0",
+    "wrangler": "^3.1.1"
+  }
+}
