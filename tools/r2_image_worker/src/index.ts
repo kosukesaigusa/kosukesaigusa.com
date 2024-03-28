@@ -1,6 +1,6 @@
 import { Hono } from 'hono/quick'
 import { cache } from 'hono/cache'
-import { sha256 } from 'hono/utils/crypto'
+import { logger } from 'hono/logger'
 import { basicAuth } from 'hono/basic-auth'
 import { detectType } from './utils'
 
@@ -11,14 +11,16 @@ type Bindings = {
 }
 
 type Data = {
-  body: string
-  width?: string
-  height?: string
+  base64: string
+  fileId: string
+  dir?: string
 }
 
 const maxAge = 60 * 60 * 24 * 30
 
 const app = new Hono<{ Bindings: Bindings }>()
+
+app.use(logger())
 
 app.put('/upload', async (c, next) => {
   const auth = basicAuth({ username: c.env.USER, password: c.env.PASS })
@@ -27,27 +29,18 @@ app.put('/upload', async (c, next) => {
 
 app.put('/upload', async (c) => {
   const data = await c.req.json<Data>()
-  const base64 = data.body
-  if (!base64) return c.notFound()
+  const base64 = data.base64
+  const fileId = data.fileId
+  const dir = data.dir ?? ''
 
+  if (!fileId) return c.notFound()
+  if (!base64) return c.notFound()
   const type = detectType(base64)
   if (!type) return c.notFound()
 
-  const body = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
-
-  let key
-
-  if (data.width && data.height) {
-    key =
-      (await sha256(body)) +
-      `_${data.width}x${data.height}` +
-      '.' +
-      type?.suffix
-  } else {
-    key = (await sha256(body)) + '.' + type?.suffix
-  }
-
-  await c.env.BUCKET.put(key, body, {
+  const uint8Array = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
+  const key = dir + fileId + '.' + type?.suffix
+  await c.env.BUCKET.put(key, uint8Array, {
     httpMetadata: { contentType: type.mimeType },
   })
 
@@ -61,11 +54,12 @@ app.get(
   })
 )
 
-app.get('/:key', async (c) => {
-  const key = c.req.param('key')
+app.get('/posts/:postId/:fileName', async (c) => {
+  const { postId, fileName } = c.req.param()
 
-  const object = await c.env.BUCKET.get(key)
+  const object = await c.env.BUCKET.get(`posts/${postId}/${fileName}`)
   if (!object) return c.notFound()
+
   const data = await object.arrayBuffer()
   const contentType = object.httpMetadata?.contentType ?? ''
 

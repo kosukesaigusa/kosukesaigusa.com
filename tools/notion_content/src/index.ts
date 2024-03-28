@@ -4,6 +4,8 @@ import { Client } from '@notionhq/client'
 import { dirname } from 'path'
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import { NotionToMarkdown } from 'notion-to-md'
+import { MdBlock } from 'notion-to-md/build/types'
+import { getR2ImageUrlMarkdownString } from './uploadImage'
 
 const notionClient = new Client({ auth: process.env.NOTION_API_KEY! })
 
@@ -47,14 +49,25 @@ const generateMarkdowns = async () => {
         : `${propertyName}: ${value}`
     })
     const mdBlocks = await n2m.pageToMarkdown(response.id)
-    // const aaa = mdBlocks
-    //   .filter((block) => block.type === 'image')
-    //   .map((block) => {
-    //     const blockId = block.blockId
-    //     const imageUrl = extractNotionImageUrl(block.parent)
-    //   })
+    const blocks: MdBlock[] = []
+    for (const block of mdBlocks) {
+      if (block.type === 'image') {
+        const m = await getR2ImageUrlMarkdownString({
+          blockId: block.blockId,
+          slug,
+          parent: block.parent,
+        })
+        const updatedBlock = {
+          ...block,
+          parent: m,
+        }
+        blocks.push(updatedBlock)
+      } else {
+        blocks.push(block)
+      }
+    }
 
-    const mdString = n2m.toMarkdownString(mdBlocks)
+    const mdString = n2m.toMarkdownString(blocks)
     const markdown = `---\n${frontmatterLines.join('\n')}\n---\n ${
       mdString.parent
     }`
@@ -64,12 +77,6 @@ const generateMarkdowns = async () => {
     fs.writeFileSync(filePath, markdown)
     console.log(`Generated ${filePath}`)
   }
-}
-
-const extractNotionImageUrl = (markdown: string): string | null => {
-  const regex = /!\[.*?\]\((.*?)\)/
-  const match = markdown.match(regex)
-  return match ? match[1] : null
 }
 
 const notionStringValue = {
