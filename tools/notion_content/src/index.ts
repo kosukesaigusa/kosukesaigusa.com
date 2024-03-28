@@ -25,6 +25,8 @@ const generateMarkdowns = async () => {
   })
   for (const pageObjectResponse of response.results) {
     const response = pageObjectResponse as PageObjectResponse
+    const emoji =
+      (response.icon as { type: string; emoji: string } | null)?.emoji ?? ''
     const slug = (response.properties['slug'] as NotionRichText).rich_text[0]
       .plain_text
     const extractedProperties = properties.map((property) => {
@@ -42,12 +44,15 @@ const generateMarkdowns = async () => {
       throw new Error('Invalid property type')
     })
 
-    const frontmatterLines = extractedProperties.map((value, index) => {
-      const propertyName = properties[index].name
-      return typeof value === 'string'
-        ? `${propertyName}: '${value}'`
-        : `${propertyName}: ${value}`
-    })
+    const frontmatterLines = [
+      emoji ? `emoji: '${emoji}'` : '',
+      ...extractedProperties.map((value, index) => {
+        const propertyName = properties[index].name
+        return typeof value === 'string'
+          ? `${propertyName}: '${value}'`
+          : `${propertyName}: ${value}`
+      }),
+    ]
     const mdBlocks = await n2m.pageToMarkdown(response.id)
     const blocks: MdBlock[] = []
     for (const block of mdBlocks) {

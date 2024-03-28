@@ -12,6 +12,7 @@ import yaml from 'yaml'
 import { postsDir } from '../constants'
 
 type Post = {
+  emoji: string
   slug: string
   title: string
   publishedAt: string
@@ -45,6 +46,7 @@ export const getPosts = async () => {
       const data = result.data.frontMatter as Post
 
       const post: Post = {
+        emoji: data.emoji,
         slug: path.parse(path.basename(filePath)).name,
         title: data.title,
         publishedAt: data.publishedAt,

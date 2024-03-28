@@ -62,6 +62,9 @@ const postListCSS = css`
   ul li a:visited {
     color: #8e32dc;
   }
+  span {
+    margin-right: 4px;
+  }
 `
 
 app.get('/', (c) => {
@@ -119,6 +122,7 @@ app.get('/', (c) => {
             .map((post) => (
               <li>
                 <time>{post.publishedAt}</time>
+                {post.emoji && <span>{post.emoji}</span>}
                 <a href={`/posts/${post.slug}`}>{post.title}</a>
               </li>
             ))
