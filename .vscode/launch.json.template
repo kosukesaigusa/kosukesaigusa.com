@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Debug Bun",
+      "program": "tools/notion_content/src/index.ts",
+      "env": {
+        "NOTION_API_KEY": "",
+        "NOTION_DATABASE_ID": "",
+        "IMAGE_WORKER_BASE_URL": "",
+        "IMAGE_WORKER_AUTH_TOKEN": ""
+      }
+    }
+  ]
+}
