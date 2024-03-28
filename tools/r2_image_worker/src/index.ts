@@ -54,10 +54,12 @@ app.get(
   })
 )
 
-app.get('/posts/:postId/:fileName', async (c) => {
-  const { postId, fileName } = c.req.param()
+app.get('/:resources/:resourceId/:fileName', async (c) => {
+  const { resources, resourceId, fileName } = c.req.param()
 
-  const object = await c.env.BUCKET.get(`posts/${postId}/${fileName}`)
+  const object = await c.env.BUCKET.get(
+    `${resources}/${resourceId}/${fileName}`
+  )
   if (!object) return c.notFound()
 
   const data = await object.arrayBuffer()
