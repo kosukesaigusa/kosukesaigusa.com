@@ -21,7 +21,8 @@ export const getFeaturedTalk = async (): Promise<FeaturedTalk | undefined> => {
     type: 'talk',
     link: 'https://youtu.be/EKoI-p1UnNk?si=SPUr5TES8OGbworj',
     body: '国内で最も大きな Flutter のカンファレンスであるFlutterKaigi では、多くのプロポーザルの中から採択され、Dartのコード生成の仕組みとコード生成パッケージを開発する方法について発表しました。',
-    imageUrl: 'http://img.youtube.com/vi/EKoI-p1UnNk/hqdefault.jpg',
+    imageUrl:
+      'https://r2-image-worker.saigusa758cloudy.workers.dev/talks/9e81d7d98aaa44a3894572f494a30563/youtube.jpg',
   }
   return talk
 }
