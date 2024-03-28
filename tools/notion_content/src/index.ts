@@ -58,7 +58,7 @@ const generateMarkdowns = async () => {
     const markdown = `---\n${frontmatterLines.join('\n')}\n---\n ${
       mdString.parent
     }`
-    const projectRoot = path.resolve(__dirname, '../../')
+    const projectRoot = path.resolve(__dirname, '../../../')
     const filePath = path.join(projectRoot, 'contents', 'posts', `${slug}.md`)
     fs.mkdirSync(dirname(filePath), { recursive: true })
     fs.writeFileSync(filePath, markdown)

@@ -24,7 +24,7 @@ jobs:
         run: |
           bun i
           bun run generate
-        working-directory: ./tools
+        working-directory: ./tools/notion_content
 
       - name: Build
         run: |
