@@ -31,7 +31,7 @@ app.put('/upload', async (c) => {
   const data = await c.req.json<Data>()
   const base64 = data.base64
   const fileId = data.fileId
-  const dir = data.dir ?? ''
+  const dir = data.dir ? `${data.dir}/` : ''
 
   if (!fileId) return c.notFound()
   if (!base64) return c.notFound()
