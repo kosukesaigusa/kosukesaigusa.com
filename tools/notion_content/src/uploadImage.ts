@@ -1,11 +1,11 @@
-type Param = {
+type ImageBlockParam = {
   blockId: string
   slug: string
   parent: string
 }
 
 export const getR2ImageUrlMarkdownString = async (
-  param: Param
+  param: ImageBlockParam
 ): Promise<string> => {
   const imageInfo = extractImageInfo(param.parent)
   const fileId = param.blockId
@@ -39,6 +39,53 @@ export const getR2ImageUrlMarkdownString = async (
     }
     console.log('Image uploaded to R2')
     return toMarkdownString(key, r2ImageUrl)
+  }
+  throw new Error('Unexpected status code from R2 image worker')
+}
+
+type CoverImageUrlParam = {
+  slug: string
+  imageUrl: string
+}
+
+export const getImageUrl = async (
+  param: CoverImageUrlParam
+): Promise<string> => {
+  const extensionMatch = param.imageUrl.match(/\.([a-zA-Z0-9]+)(?:\?|$)/)
+  if (!extensionMatch)
+    throw new Error('Failed to extract image info from markdown')
+
+  const dir = `posts/${param.slug}`
+  const fileId = 'cover_image'
+  const key = `${dir}/cover_image.${extensionMatch[1]}`
+  const r2ImageUrl = `${process.env.IMAGE_WORKER_BASE_URL}/${key}`
+  const response = await fetch(r2ImageUrl)
+  const statusCode = response.status
+
+  if (statusCode === 200) {
+    console.log(`Image already exists in R2 : ${r2ImageUrl}`)
+    return r2ImageUrl
+  }
+
+  if (statusCode === 404) {
+    console.log(`Image does not exist in R2: ${r2ImageUrl}`)
+    console.log('uploading...')
+    const base64 = await fetchAndEncodeImage(param.imageUrl)
+    const result = await fetch(
+      `https://r2-image-worker.saigusa758cloudy.workers.dev/upload`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ base64, fileId, dir }),
+        headers: {
+          Authorization: `Basic ${process.env.IMAGE_WORKER_AUTH_TOKEN}`,
+        },
+      }
+    )
+    if (result.status !== 200) {
+      throw new Error('Failed to upload image to R2 image worker')
+    }
+    console.log('Image uploaded to R2')
+    return r2ImageUrl
   }
   throw new Error('Unexpected status code from R2 image worker')
 }

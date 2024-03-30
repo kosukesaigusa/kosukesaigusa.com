@@ -5,7 +5,7 @@ import { dirname } from 'path'
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import { NotionToMarkdown } from 'notion-to-md'
 import { MdBlock } from 'notion-to-md/build/types'
-import { getR2ImageUrlMarkdownString } from './uploadImage'
+import { getImageUrl, getR2ImageUrlMarkdownString } from './uploadImage'
 
 const notionClient = new Client({ auth: process.env.NOTION_API_KEY! })
 
@@ -13,7 +13,8 @@ const n2m = new NotionToMarkdown({ notionClient })
 
 const properties: NotionProperty[] = [
   { name: 'title', type: 'title' },
-  { name: 'imageUrl', type: 'url' },
+  // { name: 'imageUrl', type: 'url' },
+  { name: 'coverImage', type: 'files' },
   { name: 'description', type: 'rich_text' },
   { name: 'publishedAt', type: 'date' },
   { name: 'isDraft', type: 'checkbox' },
@@ -29,20 +30,28 @@ const generateMarkdowns = async () => {
       (response.icon as { type: string; emoji: string } | null)?.emoji ?? ''
     const slug = (response.properties['slug'] as NotionRichText).rich_text[0]
       .plain_text
-    const extractedProperties = properties.map((property) => {
+    const extractedProperties: (string | boolean)[] = []
+    for (const property of properties) {
       if (notionStringProperties.includes(property.type)) {
-        return extractStringValue(response, property)
+        extractedProperties.push(extractStringValue(response, property))
       } else if (notionLinkProperties.includes(property.type)) {
-        return extractLinkValue(response, property)
+        extractedProperties.push(extractLinkValue(response, property))
       } else if (notionFileProperties.includes(property.type)) {
-        return extractFileValue(response, property)
+        extractedProperties.push(
+          await extractFileValue(response, property, slug)
+        )
       } else if (notionDateProperties.includes(property.type)) {
-        return extractDateValue(response, property).toISOString().split('T')[0]
+        extractedProperties.push(
+          extractDateValue(response, property).toISOString().split('T')[0]
+        )
       } else if (notionBooleanProperties.includes(property.type)) {
-        return extractBooleanValue(response, property)
+        extractedProperties.push(extractBooleanValue(response, property))
+      } else {
+        throw new Error(
+          `Invalid property type: ${property.type} (${property.type})`
+        )
       }
-      throw new Error('Invalid property type')
-    })
+    }
 
     const frontmatterLines = [
       emoji ? `emoji: '${emoji}'` : '',
@@ -208,13 +217,16 @@ function extractLinkValue(
   throw new Error('Invalid property type')
 }
 
-function extractFileValue(
+async function extractFileValue(
   response: PageObjectResponse,
-  property: NotionProperty
-): string {
+  property: NotionProperty,
+  slug: string
+): Promise<string> {
   const key = property.name
   if (property.type === 'files') {
-    return (response.properties[key] as NotionFile).files[0].file.url as string
+    const imageUrl = (response.properties[key] as NotionFile).files[0].file
+      .url as string
+    return getImageUrl({ slug, imageUrl })
   }
   throw new Error('Invalid property type')
 }
