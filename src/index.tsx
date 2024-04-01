@@ -80,54 +80,62 @@ app.get('/', (c) => {
         <h2>このページについて</h2>
         <div dangerouslySetInnerHTML={{ __html: about }}></div>
         {/* <a href="/contact">お仕事の依頼はこちら</a> */}
-        <h2>登壇など</h2>
-        {featuredTalk && (
-          <div>
-            <h3>
-              <a
-                href={featuredTalk.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {featuredTalk.title}
-              </a>
-            </h3>
-            <div>
-              <a
-                href={featuredTalk.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src={featuredTalk.imageUrl} alt={featuredTalk.title} />
-              </a>
-            </div>
-            <time>{featuredTalk.date}</time>
-            <p>{featuredTalk.body}</p>
-          </div>
+        {talks.length > 0 && (
+          <>
+            <h2>登壇など</h2>
+            {featuredTalk && (
+              <div>
+                <h3>
+                  <a
+                    href={featuredTalk.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {featuredTalk.title}
+                  </a>
+                </h3>
+                <div>
+                  <a
+                    href={featuredTalk.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src={featuredTalk.imageUrl} alt={featuredTalk.title} />
+                  </a>
+                </div>
+                <time>{featuredTalk.date}</time>
+                <p>{featuredTalk.body}</p>
+              </div>
+            )}
+            <h3>その他の登壇やコミュニティ活動</h3>
+            <ul>
+              {talks.map((talk) => (
+                <li>
+                  <time>{talk.date}</time>
+                  <a href={talk.link} target="_blank" rel="noopener noreferrer">
+                    {talk.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
-        <h3>その他の登壇やコミュニティ活動</h3>
-        <ul>
-          {talks.map((talk) => (
-            <li>
-              <time>{talk.date}</time>
-              <a href={talk.link} target="_blank" rel="noopener noreferrer">
-                {talk.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <h2>最新の記事</h2>
-        <ul>
-          {posts
-            .map((post) => (
-              <li>
-                <time>{post.publishedAt}</time>
-                {post.emoji && <span>{post.emoji}</span>}
-                <a href={`/posts/${post.slug}`}>{post.title}</a>
-              </li>
-            ))
-            .slice(0, 5)}
-        </ul>
+        {posts.length > 0 && (
+          <>
+            <h2>最新の記事</h2>
+            <ul>
+              {posts
+                .map((post) => (
+                  <li>
+                    <time>{post.publishedAt}</time>
+                    {post.emoji && <span>{post.emoji}</span>}
+                    <a href={`/posts/${post.slug}`}>{post.title}</a>
+                  </li>
+                ))
+                .slice(0, 5)}
+            </ul>
+          </>
+        )}
       </div>
     </Layout>
   )
