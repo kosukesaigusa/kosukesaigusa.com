@@ -30,7 +30,7 @@ type Metadata = {
 let metadata: Metadata = {
   title: siteName,
   url: baseURL,
-  description: '',
+  description: 'Kosuke Saigusa (@kosukesaigusa) のプロフィールページです。',
   ogImage: '/icon.jpg',
 }
 
