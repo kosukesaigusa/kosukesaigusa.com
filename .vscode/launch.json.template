@@ -5,7 +5,7 @@
       "type": "bun",
       "request": "launch",
       "name": "Debug Bun",
-      "program": "tools/notion_content/src/index.ts",
+      "program": "tools/notion-content/src/index.ts",
       "env": {
         "NOTION_API_KEY": "",
         "NOTION_CONTENTS_DB_ID": "",
