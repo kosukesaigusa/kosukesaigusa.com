@@ -18,9 +18,10 @@ export function extractSlug(response: PageObjectResponse): string {
 }
 
 type ParseNotionPropertiesParam = {
-  slug: string
   response: PageObjectResponse
   properties: NotionProperty[]
+  r2PathSegments: string[]
+  r2FileId: string
 }
 
 export async function parseNotionProperties(
@@ -35,9 +36,9 @@ export async function parseNotionProperties(
     } else if (notionFileProperties.includes(property.type)) {
       const imageUrl = extractFileValue(param.response, property)
       const r2ImageUrl = await getR2ImageUrl({
-        r2PathSegments: ['posts', param.slug],
+        r2PathSegments: param.r2PathSegments,
         imageUrl,
-        fileId: 'cover_image',
+        fileId: param.r2FileId,
       })
       extractedProperties.push(r2ImageUrl)
     } else if (notionDateProperties.includes(property.type)) {
@@ -46,6 +47,8 @@ export async function parseNotionProperties(
       )
     } else if (notionBooleanProperties.includes(property.type)) {
       extractedProperties.push(extractBooleanValue(param.response, property))
+    } else if (notionSelectProperties.includes(property.type)) {
+      extractedProperties.push(extractSelectValue(param.response, property))
     } else {
       throw new Error(
         `Invalid property type: ${property.type} (${property.type})`
@@ -107,12 +110,17 @@ const notionBooleanValue = {
   checkbox: 'checkbox',
 } as const
 
+const notionSelectValue = {
+  select: 'select',
+} as const
+
 type NotionValueType =
   | NotionStringValueType
   | NotionLinkValueType
   | NotionFileValueType
   | NotionDateValueType
   | NotionBooleanValueType
+  | NotionSelectValueType
 
 type NotionStringValueType =
   (typeof notionStringValue)[keyof typeof notionStringValue]
@@ -128,6 +136,9 @@ type NotionDateValueType =
 
 type NotionBooleanValueType =
   (typeof notionBooleanValue)[keyof typeof notionBooleanValue]
+
+type NotionSelectValueType =
+  (typeof notionSelectValue)[keyof typeof notionSelectValue]
 
 const notionStringProperties = Object.values(notionStringValue).map(
   (e) => e as string
@@ -146,6 +157,10 @@ const notionDateProperties = Object.values(notionDateValue).map(
 )
 
 const notionBooleanProperties = Object.values(notionBooleanValue).map(
+  (e) => e as string
+)
+
+const notionSelectProperties = Object.values(notionSelectValue).map(
   (e) => e as string
 )
 
@@ -179,17 +194,32 @@ type NotionCheckBox = {
   checkbox: boolean
 }
 
+type NotionSelect = {
+  type: 'select'
+  select: {
+    id: string
+    name: string
+    color: string
+  }
+}
+
 function extractStringValue(
   response: PageObjectResponse,
   property: NotionProperty
 ): string {
   const key = property.name
   if (property.type === 'title') {
-    return (response.properties[key] as NotionTitle).title[0]
-      .plain_text as string
+    const title = (response.properties[key] as NotionTitle).title
+    if (title.length === 0) {
+      return ''
+    }
+    return title[0].plain_text as string
   } else if (property.type === 'rich_text') {
-    return (response.properties[key] as NotionRichText).rich_text[0]
-      .plain_text as string
+    const richText = (response.properties[key] as NotionRichText).rich_text
+    if (richText.length === 0) {
+      return ''
+    }
+    return richText[0].plain_text as string
   }
   throw new Error('Invalid property type')
 }
@@ -236,6 +266,17 @@ function extractBooleanValue(
   const key = property.name
   if (property.type === 'checkbox') {
     return (response.properties[key] as NotionCheckBox).checkbox as boolean
+  }
+  throw new Error('Invalid property type')
+}
+
+function extractSelectValue(
+  response: PageObjectResponse,
+  property: NotionProperty
+): string {
+  const key = property.name
+  if (property.type === 'select') {
+    return (response.properties[key] as NotionSelect).select.name as string
   }
   throw new Error('Invalid property type')
 }

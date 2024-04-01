@@ -42,7 +42,49 @@ async function generateContents() {
   console.log(`✅ Generated markdown file: about-this-site.md`)
 }
 
-const properties: NotionProperty[] = [
+const talkProperties: NotionProperty[] = [
+  { name: 'isFeatured', type: 'checkbox' },
+  { name: 'title', type: 'title' },
+  { name: 'body', type: 'rich_text' },
+  { name: 'date', type: 'date' },
+  { name: 'type', type: 'select' },
+  { name: 'link', type: 'url' },
+  { name: 'imageUrl', type: 'url' },
+]
+
+async function generateTalks() {
+  console.log(`---`)
+  console.log(`Generating talks...`)
+  const projectRoot = path.resolve(__dirname, '../../../')
+  const response = await queryNotionDatabase('talks')
+  const talks: {
+    [k: string]: string | boolean
+  }[] = []
+  for (const pageObjectResponse of response.results) {
+    const response = pageObjectResponse as PageObjectResponse
+    const extractedProperties = await parseNotionProperties({
+      response,
+      properties: talkProperties,
+      r2PathSegments: ['talks', response.id],
+      r2FileId: 'image',
+    })
+
+    const talk = Object.fromEntries(
+      extractedProperties.map((value, index) => {
+        const propertyName = talkProperties[index].name
+        return [propertyName, value]
+      })
+    )
+    talks.push(talk)
+  }
+
+  const filePath = path.join(projectRoot, 'contents', 'talks', 'talks.json')
+  fs.mkdirSync(path.dirname(filePath), { recursive: true })
+  fs.writeFileSync(filePath, JSON.stringify({ talks }, null, 2))
+  console.log(`✅ Generated ${filePath}`)
+}
+
+const postProperties: NotionProperty[] = [
   { name: 'title', type: 'title' },
   // { name: 'imageUrl', type: 'url' },
   { name: 'coverImage', type: 'files' },
@@ -63,16 +105,17 @@ async function generatePosts() {
     const emoji = extractEmoji(response)
     const slug = extractSlug(response)
     const extractedProperties = await parseNotionProperties({
-      slug,
       response,
-      properties,
+      properties: postProperties,
+      r2PathSegments: ['posts', slug],
+      r2FileId: 'cover_image',
     })
 
     const frontmatter = toFrontmatterString(
       Object.fromEntries([
         emoji ? ['emoji', emoji] : [],
         ...extractedProperties.map((value, index) => {
-          const propertyName = properties[index].name
+          const propertyName = postProperties[index].name
           return [propertyName, value]
         }),
       ])
@@ -93,5 +136,6 @@ async function generatePosts() {
 
 ;(async () => {
   await generateContents()
+  await generateTalks()
   await generatePosts()
 })()
