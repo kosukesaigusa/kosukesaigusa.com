@@ -2,14 +2,14 @@ import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import fs from 'fs'
 import path, { dirname } from 'path'
 import { toFrontmatterString } from './markdown'
+import { queryNotionDatabase } from './notion/db'
 import {
   NotionProperty,
   extractEmoji,
   extractSlug,
   markdownContentFromNotionPage,
   parseNotionProperties,
-  queryDatabase,
-} from './notion'
+} from './notion/notion'
 
 const properties: NotionProperty[] = [
   { name: 'title', type: 'title' },
@@ -22,7 +22,7 @@ const properties: NotionProperty[] = [
 
 const generateMarkdowns = async () => {
   const projectRoot = path.resolve(__dirname, '../../../')
-  const response = await queryDatabase()
+  const response = await queryNotionDatabase('posts')
   const length = response.results.length
   for (const [index, pageObjectResponse] of response.results.entries()) {
     console.log(`🔄 (${index + 1}/${length}) Generating markdown...`)

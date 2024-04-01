@@ -1,23 +1,12 @@
-import { Client } from '@notionhq/client'
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
-import { NotionToMarkdown } from 'notion-to-md'
 import { MdBlock } from 'notion-to-md/build/types'
-import { toMarkdownImageLink, urlFromMarkdownImageLink } from './markdown'
-import { getR2ImageUrl } from './r2'
-
-const notionClient = new Client({ auth: process.env.NOTION_API_KEY! })
-
-const n2m = new NotionToMarkdown({ notionClient })
+import { toMarkdownImageLink, urlFromMarkdownImageLink } from '../markdown'
+import { getR2ImageUrl } from '../r2'
+import { n2m } from './config'
 
 export type NotionProperty = {
   name: string
   type: NotionValueType
-}
-
-export function queryDatabase() {
-  return notionClient.databases.query({
-    database_id: process.env.NOTION_DATABASE_ID!,
-  })
 }
 
 export function extractEmoji(response: PageObjectResponse): string | undefined {

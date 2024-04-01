@@ -20,7 +20,9 @@ jobs:
       - name: Generate markdowns
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_CONTENTS_DB_ID: ${{ secrets.NOTION_CONTENTS_DB_ID }}
+          NOTION_POSTS_DB_ID: ${{ secrets.NOTION_POSTS_DB_ID }}
+          NOTION_TALKS_DB_ID: ${{ secrets.NOTION_TALKS_DB_ID }}
           IMAGE_WORKER_AUTH_TOKEN: ${{ secrets.IMAGE_WORKER_AUTH_TOKEN }}
           IMAGE_WORKER_BASE_URL: ${{ secrets.IMAGE_WORKER_BASE_URL }}
         run: |

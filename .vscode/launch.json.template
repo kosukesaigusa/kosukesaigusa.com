@@ -8,7 +8,9 @@
       "program": "tools/notion_content/src/index.ts",
       "env": {
         "NOTION_API_KEY": "",
-        "NOTION_DATABASE_ID": "",
+        "NOTION_CONTENTS_DB_ID": "",
+        "NOTION_POSTS_DB_ID": "",
+        "NOTION_TALKS_DB_ID": "",
         "IMAGE_WORKER_BASE_URL": "",
         "IMAGE_WORKER_AUTH_TOKEN": ""
       }
