@@ -104,7 +104,6 @@ app.get('/', (c) => {
                     <img src={featuredTalk.imageUrl} alt={featuredTalk.title} />
                   </a>
                 </div>
-                <time>{featuredTalk.date}</time>
                 <p>{featuredTalk.body}</p>
               </div>
             )}
