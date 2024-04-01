@@ -1,11 +1,11 @@
-import path from 'path'
-import fs from 'fs'
 import { Client } from '@notionhq/client'
-import { dirname } from 'path'
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
+import fs from 'fs'
 import { NotionToMarkdown } from 'notion-to-md'
 import { MdBlock } from 'notion-to-md/build/types'
-import { getImageUrl, getR2ImageUrlMarkdownString } from './uploadImage'
+import path, { dirname } from 'path'
+import { toMarkdownImageLink, urlFromMarkdownImageLink } from './markdown'
+import { getR2ImageUrl } from './r2'
 
 const notionClient = new Client({ auth: process.env.NOTION_API_KEY! })
 
@@ -37,9 +37,13 @@ const generateMarkdowns = async () => {
       } else if (notionLinkProperties.includes(property.type)) {
         extractedProperties.push(extractLinkValue(response, property))
       } else if (notionFileProperties.includes(property.type)) {
-        extractedProperties.push(
-          await extractFileValue(response, property, slug)
-        )
+        const imageUrl = extractFileValue(response, property)
+        const r2ImageUrl = await getR2ImageUrl({
+          r2PathSegments: ['posts', slug],
+          imageUrl,
+          fileId: 'cover_image',
+        })
+        extractedProperties.push(r2ImageUrl)
       } else if (notionDateProperties.includes(property.type)) {
         extractedProperties.push(
           extractDateValue(response, property).toISOString().split('T')[0]
@@ -66,14 +70,18 @@ const generateMarkdowns = async () => {
     const blocks: MdBlock[] = []
     for (const block of mdBlocks) {
       if (block.type === 'image') {
-        const m = await getR2ImageUrlMarkdownString({
-          blockId: block.blockId,
-          slug,
-          parent: block.parent,
+        const url = urlFromMarkdownImageLink(block.parent)
+        const r2ImageUrl = await getR2ImageUrl({
+          r2PathSegments: ['posts', slug],
+          imageUrl: url,
+          fileId: block.blockId,
         })
         const updatedBlock = {
           ...block,
-          parent: m,
+          parent: toMarkdownImageLink({
+            altText: block.blockId,
+            url: r2ImageUrl,
+          }),
         }
         blocks.push(updatedBlock)
       } else {
@@ -89,7 +97,7 @@ const generateMarkdowns = async () => {
     const filePath = path.join(projectRoot, 'contents', 'posts', `${slug}.md`)
     fs.mkdirSync(dirname(filePath), { recursive: true })
     fs.writeFileSync(filePath, markdown)
-    console.log(`Generated ${filePath}`)
+    console.log(`✅ Generated ${filePath}`)
   }
 }
 
@@ -217,16 +225,13 @@ function extractLinkValue(
   throw new Error('Invalid property type')
 }
 
-async function extractFileValue(
+function extractFileValue(
   response: PageObjectResponse,
-  property: NotionProperty,
-  slug: string
-): Promise<string> {
+  property: NotionProperty
+): string {
   const key = property.name
   if (property.type === 'files') {
-    const imageUrl = (response.properties[key] as NotionFile).files[0].file
-      .url as string
-    return getImageUrl({ slug, imageUrl })
+    return (response.properties[key] as NotionFile).files[0].file.url as string
   }
   throw new Error('Invalid property type')
 }
