@@ -112,6 +112,7 @@ app.get('/', (c) => {
               {talks.map((talk) => (
                 <li>
                   <time>{talk.date}</time>
+                  {talk.emoji && <span>{talk.emoji}</span>}
                   <a href={talk.link} target="_blank" rel="noopener noreferrer">
                     {talk.title}
                   </a>

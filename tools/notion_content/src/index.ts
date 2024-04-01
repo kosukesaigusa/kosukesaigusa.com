@@ -66,6 +66,7 @@ async function generateTalks() {
   }[] = []
   for (const pageObjectResponse of response.results) {
     const response = pageObjectResponse as PageObjectResponse
+    const emoji = extractEmoji(response)
     const extractedProperties = await parseNotionProperties({
       response,
       properties: talkProperties,
@@ -73,12 +74,13 @@ async function generateTalks() {
       r2FileId: 'image',
     })
 
-    const talk = Object.fromEntries(
-      extractedProperties.map((value, index) => {
+    const talk = Object.fromEntries([
+      ...(emoji ? [['emoji', emoji]] : []),
+      ...extractedProperties.map((value, index) => {
         const propertyName = talkProperties[index].name
         return [propertyName, value]
-      })
-    )
+      }),
+    ])
     talks.push(talk)
   }
 
@@ -117,7 +119,7 @@ async function generatePosts() {
 
     const frontmatter = toFrontmatterString(
       Object.fromEntries([
-        emoji ? ['emoji', emoji] : [],
+        ...(emoji ? [['emoji', emoji]] : []),
         ...extractedProperties.map((value, index) => {
           const propertyName = postProperties[index].name
           return [propertyName, value]

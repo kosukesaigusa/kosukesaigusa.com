@@ -3,6 +3,7 @@ import path from 'path'
 import { talksDir } from '../constants'
 
 type FeaturedTalk = {
+  emoji: string
   title: string
   body: string
   date: string
@@ -11,6 +12,7 @@ type FeaturedTalk = {
 }
 
 type Talk = {
+  emoji: string
   isFeatured: boolean
   title: string
   body: string
@@ -30,6 +32,7 @@ export async function getFeaturedTalk(): Promise<FeaturedTalk | undefined> {
     throw new Error('Featured talk is missing an image')
   }
   return {
+    emoji: featuredTalk.emoji,
     title: featuredTalk.title,
     date: featuredTalk.date,
     link: featuredTalk.link,
