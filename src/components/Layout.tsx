@@ -1,8 +1,8 @@
 import { FC } from 'hono/jsx'
+import { globalCSS } from '../lib/style'
 import { Footer } from './Footer'
 import { Head } from './Head'
 import { Header } from './Header'
-import { globalCSS } from '../lib/style'
 
 export const Layout: FC = (props) => {
   return (

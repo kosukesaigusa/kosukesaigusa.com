@@ -1,7 +1,7 @@
-import { Hono } from 'hono/quick'
+import { basicAuth } from 'hono/basic-auth'
 import { cache } from 'hono/cache'
 import { logger } from 'hono/logger'
-import { basicAuth } from 'hono/basic-auth'
+import { Hono } from 'hono/quick'
 import { detectType } from './utils'
 
 type Bindings = {
