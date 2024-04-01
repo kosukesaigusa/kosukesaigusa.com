@@ -5,19 +5,18 @@ import { jsxRenderer } from 'hono/jsx-renderer'
 import { ssgParams } from 'hono/ssg'
 import { Layout } from './components/Layout'
 import { baseURL, siteName } from './lib/constants'
-import { getAbout } from './lib/contents/about'
+import { getAboutThisSite } from './lib/contents/aboutThisSite'
 import { getPosts } from './lib/contents/post'
 import { getFeaturedTalk, getTalks } from './lib/contents/talk'
 
 const app = new Hono()
 
-const about = await getAbout()
-
-const featuredTalk = await getFeaturedTalk()
-
-const talks = await getTalks()
-
-const posts = await getPosts()
+const [aboutThisSite, featuredTalk, talks, posts] = await Promise.all([
+  getAboutThisSite(),
+  getFeaturedTalk(),
+  getTalks(),
+  getPosts(),
+])
 
 type Metadata = {
   title: string
@@ -78,7 +77,7 @@ app.get('/', (c) => {
     <Layout metadata={metadata}>
       <div class={postListCSS}>
         <h2>このページについて</h2>
-        <div dangerouslySetInnerHTML={{ __html: about }}></div>
+        <div dangerouslySetInnerHTML={{ __html: aboutThisSite }}></div>
         {/* <a href="/contact">お仕事の依頼はこちら</a> */}
         {talks.length > 0 && (
           <>

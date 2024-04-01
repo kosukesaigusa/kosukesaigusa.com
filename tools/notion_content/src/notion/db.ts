@@ -1,4 +1,7 @@
-import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
+import {
+  QueryDatabaseParameters,
+  QueryDatabaseResponse,
+} from '@notionhq/client/build/src/api-endpoints'
 import { notionClient } from './config'
 
 const databaseIds = {
@@ -10,9 +13,13 @@ const databaseIds = {
 export type DatabaseKey = keyof typeof databaseIds
 
 export function queryNotionDatabase(
-  key: DatabaseKey
+  key: DatabaseKey,
+  args?: Omit<QueryDatabaseParameters, 'database_id'>
 ): Promise<QueryDatabaseResponse> {
-  return notionClient.databases.query({ database_id: databaseId(key) })
+  return notionClient.databases.query({
+    database_id: databaseId(key),
+    ...args,
+  })
 }
 
 function databaseId(key: DatabaseKey): string {

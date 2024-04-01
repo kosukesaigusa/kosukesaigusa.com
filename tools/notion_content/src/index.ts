@@ -10,6 +10,37 @@ import {
   markdownContentFromNotionPage,
   parseNotionProperties,
 } from './notion/notion'
+import { single } from './utils'
+
+async function generateContents() {
+  console.log(`---`)
+  console.log(`Generating contents...`)
+  const projectRoot = path.resolve(__dirname, '../../../')
+  const response = await queryNotionDatabase('contents', {
+    filter: {
+      and: [
+        {
+          property: 'key',
+          select: {
+            equals: 'about-this-site',
+          },
+        },
+      ],
+    },
+  })
+  const pageObjectResponse = single(response.results) as PageObjectResponse
+
+  const markdownContent = await markdownContentFromNotionPage(
+    pageObjectResponse.id,
+    ['contents', 'about-this-site']
+  )
+
+  const filePath = path.join(projectRoot, 'contents', `about-this-site.md`)
+  fs.mkdirSync(dirname(filePath), { recursive: true })
+  fs.writeFileSync(filePath, markdownContent)
+
+  console.log(`✅ Generated markdown file: about-this-site.md`)
+}
 
 const properties: NotionProperty[] = [
   { name: 'title', type: 'title' },
@@ -20,7 +51,9 @@ const properties: NotionProperty[] = [
   { name: 'isDraft', type: 'checkbox' },
 ]
 
-const generateMarkdowns = async () => {
+async function generatePosts() {
+  console.log(`---`)
+  console.log(`Generating posts...`)
   const projectRoot = path.resolve(__dirname, '../../../')
   const response = await queryNotionDatabase('posts')
   const length = response.results.length
@@ -59,5 +92,6 @@ const generateMarkdowns = async () => {
 }
 
 ;(async () => {
-  await generateMarkdowns()
+  await generateContents()
+  await generatePosts()
 })()
