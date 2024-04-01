@@ -71,4 +71,19 @@ app.get('/:resources/:resourceId/:fileName', async (c) => {
   })
 })
 
+app.get('/assets/:fileName', async (c) => {
+  const fileName = c.req.param().fileName
+
+  const object = await c.env.BUCKET.get(`assets/${fileName}`)
+  if (!object) return c.notFound()
+
+  const data = await object.arrayBuffer()
+  const contentType = object.httpMetadata?.contentType ?? ''
+
+  return c.body(data, 200, {
+    'Cache-Control': `public, max-age=${maxAge}`,
+    'Content-Type': contentType,
+  })
+})
+
 export default app
