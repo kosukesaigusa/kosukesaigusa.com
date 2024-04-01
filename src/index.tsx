@@ -31,7 +31,7 @@ let metadata: Metadata = {
   title: siteName,
   url: baseURL,
   description: 'Kosuke Saigusa (@kosukesaigusa) のプロフィールページです。',
-  ogImage: '/icon.jpg',
+  ogImage: `${process.env.IMAGE_WORKER_BASE_URL}/assets/profile_1260_630.jpg`,
 }
 
 app.use('*', serveStatic({ root: 'public' }))
@@ -70,10 +70,10 @@ const postListCSS = css`
 
 app.get('/', (c) => {
   metadata = {
-    description: 'kosukesaigusa',
-    ogImage: '/icon.jpg',
     title: siteName,
     url: baseURL,
+    description: 'Kosuke Saigusa (@kosukesaigusa) のプロフィールページです。',
+    ogImage: `${process.env.IMAGE_WORKER_BASE_URL}/assets/profile_1260_630.jpg`,
   }
   return c.render(
     <Layout metadata={metadata}>
@@ -158,10 +158,10 @@ app.get(
       return c.redirect('/404')
     }
     metadata = {
-      description: post.description,
-      ogImage: post.coverImage,
       title: siteName + ` - ${post.title}`,
       url: baseURL + '/posts/' + post.slug,
+      description: post.description,
+      ogImage: post.coverImage,
     }
     return c.render(
       <Layout metadata={metadata}>
@@ -176,9 +176,9 @@ app.get(
 
 app.get('/contact', async (c) => {
   metadata = {
-    description: 'お仕事の依頼',
-    ogImage: '/icon.jpg',
     title: siteName + ' - お仕事の依頼',
+    description: 'お仕事の依頼',
+    ogImage: `${process.env.IMAGE_WORKER_BASE_URL}/assets/profile_1260_630.jpg`,
     url: baseURL + '/contact',
   }
   return c.render(
