@@ -6,16 +6,18 @@ import { ssgParams } from 'hono/ssg'
 import { Layout } from './components/Layout'
 import { baseURL, siteName } from './lib/constants'
 import { getAboutThisSite } from './lib/contents/aboutThisSite'
+import { getContact } from './lib/contents/contact'
 import { getPosts } from './lib/contents/post'
 import { getFeaturedTalk, getTalks } from './lib/contents/talk'
 
 const app = new Hono()
 
-const [aboutThisSite, featuredTalk, talks, posts] = await Promise.all([
+const [aboutThisSite, featuredTalk, talks, posts, contact] = await Promise.all([
   getAboutThisSite(),
   getFeaturedTalk(),
   getTalks(),
   getPosts(),
+  getContact(),
 ])
 
 type Metadata = {
@@ -78,7 +80,7 @@ app.get('/', (c) => {
       <div class={postListCSS}>
         <h2>このページについて</h2>
         <div dangerouslySetInnerHTML={{ __html: aboutThisSite }}></div>
-        {/* <a href="/contact">お仕事の依頼はこちら</a> */}
+        <a href="/contact">お仕事の依頼はこちら</a>
         {talks.length > 0 && (
           <>
             <h2>登壇など</h2>
@@ -172,21 +174,21 @@ app.get(
   }
 )
 
-// app.get('/contact', async (c) => {
-//   metadata = {
-//     description: 'お仕事の依頼',
-//     ogImage: '/icon.jpg',
-//     title: siteName + ' - お仕事の依頼',
-//     url: baseURL + '/contact',
-//   }
-//   return c.render(
-//     <Layout metadata={metadata}>
-//       <h1>title</h1>
-//       <hr />
-//       <div dangerouslySetInnerHTML={{ __html: post.body }}></div>
-//     </Layout>
-//   )
-// })
+app.get('/contact', async (c) => {
+  metadata = {
+    description: 'お仕事の依頼',
+    ogImage: '/icon.jpg',
+    title: siteName + ' - お仕事の依頼',
+    url: baseURL + '/contact',
+  }
+  return c.render(
+    <Layout metadata={metadata}>
+      <h1>お仕事の依頼</h1>
+      <hr />
+      <div dangerouslySetInnerHTML={{ __html: contact.body }}></div>
+    </Layout>
+  )
+})
 
 app.get('/404', (c) => c.notFound())
 

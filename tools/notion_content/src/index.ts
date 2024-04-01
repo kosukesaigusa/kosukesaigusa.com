@@ -12,34 +12,38 @@ import {
 } from './notion/notion'
 import { single } from './utils'
 
+const contentKeys = ['about-this-site', 'contact']
+
 async function generateContents() {
-  console.log(`---`)
-  console.log(`Generating contents...`)
-  const projectRoot = path.resolve(__dirname, '../../../')
-  const response = await queryNotionDatabase('contents', {
-    filter: {
-      and: [
-        {
-          property: 'key',
-          select: {
-            equals: 'about-this-site',
+  for (const key of contentKeys) {
+    console.log(`---`)
+    console.log(`Generating contents (${key})...`)
+    const projectRoot = path.resolve(__dirname, '../../../')
+    const response = await queryNotionDatabase('contents', {
+      filter: {
+        and: [
+          {
+            property: 'key',
+            select: {
+              equals: key,
+            },
           },
-        },
-      ],
-    },
-  })
-  const pageObjectResponse = single(response.results) as PageObjectResponse
+        ],
+      },
+    })
+    const pageObjectResponse = single(response.results) as PageObjectResponse
 
-  const markdownContent = await markdownContentFromNotionPage(
-    pageObjectResponse.id,
-    ['contents', 'about-this-site']
-  )
+    const markdownContent = await markdownContentFromNotionPage(
+      pageObjectResponse.id,
+      ['contents', key]
+    )
 
-  const filePath = path.join(projectRoot, 'contents', `about-this-site.md`)
-  fs.mkdirSync(dirname(filePath), { recursive: true })
-  fs.writeFileSync(filePath, markdownContent)
+    const filePath = path.join(projectRoot, 'contents', `${key}.md`)
+    fs.mkdirSync(dirname(filePath), { recursive: true })
+    fs.writeFileSync(filePath, markdownContent)
 
-  console.log(`✅ Generated markdown file: about-this-site.md`)
+    console.log(`✅ Generated markdown file: ${key}.md`)
+  }
 }
 
 const talkProperties: NotionProperty[] = [
