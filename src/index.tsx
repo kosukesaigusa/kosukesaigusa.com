@@ -67,6 +67,23 @@ const postListCSS = css`
   span {
     margin-right: 4px;
   }
+  .responsive-wrapper {
+    width: 100%; /* Adjust the width according to the viewport */
+    position: relative; /* Specify the position of child elements as absolute */
+  }
+  .responsive-wrapper::before {
+    content: '';
+    display: block;
+    padding-top: 75%; /* Set height to 75% of the width */
+  }
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Adjust the image to fill the container */
+  }
 `
 
 app.get('/', (c) => {
@@ -97,7 +114,7 @@ app.get('/', (c) => {
                     {featuredTalk.title}
                   </a>
                 </h3>
-                <div>
+                <div class="responsive-wrapper">
                   <a
                     href={featuredTalk.link}
                     target="_blank"
