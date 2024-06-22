@@ -8,17 +8,13 @@ import { baseURL, siteName } from './lib/constants'
 import { getAboutThisSite } from './lib/contents/aboutThisSite'
 import { getContact } from './lib/contents/contact'
 import { getPosts } from './lib/contents/post'
-import { getFeaturedTalk, getTalks } from './lib/contents/talk'
+import { getFeaturedTalks, getTalks } from './lib/contents/talk'
 
 const app = new Hono()
 
-const [aboutThisSite, featuredTalk, talks, posts, contact] = await Promise.all([
-  getAboutThisSite(),
-  getFeaturedTalk(),
-  getTalks(),
-  getPosts(),
-  getContact(),
-])
+const [aboutThisSite, featuredTalks, talks, posts, contact] = await Promise.all(
+  [getAboutThisSite(), getFeaturedTalks(), getTalks(), getPosts(), getContact()]
+)
 
 type Metadata = {
   title: string
@@ -103,7 +99,7 @@ app.get('/', (c) => {
         {talks.length > 0 && (
           <>
             <h2>登壇など</h2>
-            {featuredTalk && (
+            {featuredTalks.map((featuredTalk) => (
               <div>
                 <h3>
                   <a
@@ -125,7 +121,7 @@ app.get('/', (c) => {
                 </div>
                 <p>{featuredTalk.body}</p>
               </div>
-            )}
+            ))}
             <h3>その他の登壇やコミュニティ活動</h3>
             <ul>
               {talks.map((talk) => (
