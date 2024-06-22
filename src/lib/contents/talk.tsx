@@ -22,23 +22,19 @@ type Talk = {
   imageUrl: string | null
 }
 
-export async function getFeaturedTalk(): Promise<FeaturedTalk | undefined> {
+export async function getFeaturedTalks(): Promise<FeaturedTalk[]> {
   const talks = await getTalks()
-  const featuredTalk = talks.find((talk) => talk.isFeatured)
-  if (!featuredTalk) {
-    return undefined
-  }
-  if (!featuredTalk.imageUrl) {
-    throw new Error('Featured talk is missing an image')
-  }
-  return {
+  const featuredTalks = talks.filter(
+    (talk) => talk.isFeatured && talk.imageUrl !== null
+  )
+  return featuredTalks.map((featuredTalk) => ({
     emoji: featuredTalk.emoji,
     title: featuredTalk.title,
+    body: featuredTalk.body,
     date: featuredTalk.date,
     link: featuredTalk.link,
-    imageUrl: featuredTalk.imageUrl,
-    body: featuredTalk.body,
-  }
+    imageUrl: featuredTalk.imageUrl!,
+  }))
 }
 
 export async function getTalks(): Promise<Talk[]> {
