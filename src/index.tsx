@@ -27,8 +27,7 @@ let metadata: Metadata = {
   title: siteName,
   url: baseURL,
   description: 'Kosuke Saigusa (@kosukesaigusa) のプロフィールページです。',
-  ogImage:
-    'https://r2-image-worker.saigusa758cloudy.workers.dev/assets/profile_1260_630.jpg',
+  ogImage: 'https://cdn.kosukesaigusa.com/assets/profile_1260_630.jpg',
 }
 
 app.use('*', serveStatic({ root: 'public' }))
@@ -87,8 +86,7 @@ app.get('/', (c) => {
     title: siteName,
     url: baseURL,
     description: 'Kosuke Saigusa (@kosukesaigusa) のプロフィールページです。',
-    ogImage:
-      'https://r2-image-worker.saigusa758cloudy.workers.dev/assets/profile_1260_630.jpg',
+    ogImage: 'https://cdn.kosukesaigusa.com/assets/profile_1260_630.jpg',
   }
   return c.render(
     <Layout metadata={metadata}>
@@ -194,8 +192,7 @@ app.get('/contact', async (c) => {
     title: siteName + ' - お仕事の依頼',
     url: baseURL + '/contact',
     description: 'お仕事の依頼',
-    ogImage:
-      'https://r2-image-worker.saigusa758cloudy.workers.dev/assets/profile_1260_630.jpg',
+    ogImage: 'https://cdn.kosukesaigusa.com/assets/profile_1260_630.jpg',
   }
   return c.render(
     <Layout metadata={metadata}>
