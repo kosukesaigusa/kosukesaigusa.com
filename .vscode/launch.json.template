@@ -11,6 +11,7 @@
         "NOTION_CONTENTS_DB_ID": "",
         "NOTION_POSTS_DB_ID": "",
         "NOTION_TALKS_DB_ID": "",
+        "R2_PUBLIC_BASE_URL": "",
         "IMAGE_WORKER_BASE_URL": "",
         "IMAGE_WORKER_AUTH_TOKEN": ""
       }

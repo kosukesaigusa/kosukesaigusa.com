@@ -20,7 +20,7 @@ export async function getR2ImageUrl(param: Param): Promise<string> {
 async function getExistingR2ImageUrl(param: Param): Promise<string | null> {
   const extension = extractExtension(param.imageUrl)
   const r2Key = `${param.r2PathSegments.join('/')}/${param.fileId}.${extension}`
-  const r2ImageUrl = `${process.env.IMAGE_WORKER_BASE_URL}/${r2Key}`
+  const r2ImageUrl = `${process.env.R2_PUBLIC_BASE_URL}/${r2Key}`
   const response = await fetch(r2ImageUrl)
   const statusCode = response.status
   if (statusCode === 200) {
@@ -49,7 +49,7 @@ async function uploadImageToR2(param: Param): Promise<string> {
     ...param.r2PathSegments,
     `${param.fileId}.${extractExtension(param.imageUrl)}`,
   ].join('/')
-  return `${process.env.IMAGE_WORKER_BASE_URL}/${key}`
+  return `${process.env.R2_PUBLIC_BASE_URL}/${key}`
 }
 
 async function encodeImage(imageUrl: string): Promise<string> {
