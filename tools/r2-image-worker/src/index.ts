@@ -1,5 +1,4 @@
 import { basicAuth } from 'hono/basic-auth'
-import { cache } from 'hono/cache'
 import { logger } from 'hono/logger'
 import { Hono } from 'hono/quick'
 import { detectType } from './utils'
@@ -47,43 +46,43 @@ app.put('/upload', async (c) => {
   return c.text(key)
 })
 
-app.get(
-  '*',
-  cache({
-    cacheName: 'r2-image-worker',
-  })
-)
+// app.get(
+//   '*',
+//   cache({
+//     cacheName: 'r2-image-worker',
+//   })
+// )
 
-app.get('/:resources/:resourceId/:fileName', async (c) => {
-  const { resources, resourceId, fileName } = c.req.param()
+// app.get('/:resources/:resourceId/:fileName', async (c) => {
+//   const { resources, resourceId, fileName } = c.req.param()
 
-  const object = await c.env.BUCKET.get(
-    `${resources}/${resourceId}/${fileName}`
-  )
-  if (!object) return c.notFound()
+//   const object = await c.env.BUCKET.get(
+//     `${resources}/${resourceId}/${fileName}`
+//   )
+//   if (!object) return c.notFound()
 
-  const data = await object.arrayBuffer()
-  const contentType = object.httpMetadata?.contentType ?? ''
+//   const data = await object.arrayBuffer()
+//   const contentType = object.httpMetadata?.contentType ?? ''
 
-  return c.body(data, 200, {
-    'Cache-Control': `public, max-age=${maxAge}`,
-    'Content-Type': contentType,
-  })
-})
+//   return c.body(data, 200, {
+//     'Cache-Control': `public, max-age=${maxAge}`,
+//     'Content-Type': contentType,
+//   })
+// })
 
-app.get('/assets/:fileName', async (c) => {
-  const fileName = c.req.param().fileName
+// app.get('/assets/:fileName', async (c) => {
+//   const fileName = c.req.param().fileName
 
-  const object = await c.env.BUCKET.get(`assets/${fileName}`)
-  if (!object) return c.notFound()
+//   const object = await c.env.BUCKET.get(`assets/${fileName}`)
+//   if (!object) return c.notFound()
 
-  const data = await object.arrayBuffer()
-  const contentType = object.httpMetadata?.contentType ?? ''
+//   const data = await object.arrayBuffer()
+//   const contentType = object.httpMetadata?.contentType ?? ''
 
-  return c.body(data, 200, {
-    'Cache-Control': `public, max-age=${maxAge}`,
-    'Content-Type': contentType,
-  })
-})
+//   return c.body(data, 200, {
+//     'Cache-Control': `public, max-age=${maxAge}`,
+//     'Content-Type': contentType,
+//   })
+// })
 
-export default app
+// export default app
