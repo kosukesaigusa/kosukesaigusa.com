@@ -7,6 +7,10 @@ const entry = 'src/index.tsx'
 
 export default defineConfig(() => {
   return {
-    plugins: [devServer({ entry }), Sitemap(), ssg({ entry })],
+    plugins: [
+      devServer({ entry }),
+      Sitemap({ hostname: 'https://kosukesaigusa.com' }),
+      ssg({ entry }),
+    ],
   }
 })
