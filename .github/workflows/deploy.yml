@@ -25,7 +25,6 @@ jobs:
           NOTION_TALKS_DB_ID: ${{ secrets.NOTION_TALKS_DB_ID }}
           IMAGE_WORKER_AUTH_TOKEN: ${{ secrets.IMAGE_WORKER_AUTH_TOKEN }}
           IMAGE_WORKER_BASE_URL: ${{ secrets.IMAGE_WORKER_BASE_URL }}
-          R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
         run: |
           bun i
           bun run generate

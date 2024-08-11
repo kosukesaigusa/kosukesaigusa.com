@@ -1,3 +1,5 @@
+import { R2_PUBLIC_BASE_URL } from './constants'
+
 type Image =
   | string
   | {
@@ -37,7 +39,7 @@ async function getExistingR2ImageUrl(param: {
   const r2Key = `${param.r2PathSegments.join('/')}/${param.fileId}.${
     param.extension
   }`
-  const r2ImageUrl = `${process.env.R2_PUBLIC_BASE_URL}/${r2Key}`
+  const r2ImageUrl = `${R2_PUBLIC_BASE_URL}/${r2Key}`
   const response = await fetch(r2ImageUrl)
   const statusCode = response.status
   if (statusCode === 200) {
@@ -68,7 +70,7 @@ async function uploadImageToR2(param: Param): Promise<string> {
     ...param.r2PathSegments,
     `${param.fileId}.${extractExtensionFromImage(param.image)}`,
   ].join('/')
-  return `${process.env.R2_PUBLIC_BASE_URL}/${key}`
+  return `${R2_PUBLIC_BASE_URL}/${key}`
 }
 
 async function encodeImage(image: Image): Promise<string> {
