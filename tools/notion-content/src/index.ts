@@ -151,7 +151,7 @@ async function maybeUploadPostOGImage(param: {
   title: string
   slug: string
 }): Promise<string> {
-  const extension = 'png'
+  const extension = 'webp'
   const ogImageBuffer = await generateOGImage(param.title, extension)
   const ogImageUrl = await maybeUploadImageToR2({
     r2PathSegments: ['posts', param.slug],
