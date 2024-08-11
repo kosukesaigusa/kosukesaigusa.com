@@ -10,6 +10,8 @@ import {
   markdownContentFromNotionPage,
   parseNotionProperties,
 } from './notion/notion'
+import { generateOGImage } from './og'
+import { maybeUploadImageToR2 } from './r2'
 import { single } from './utils'
 
 const contentKeys = ['about-this-site', 'contact']
@@ -92,8 +94,6 @@ async function generateTalks() {
 
 const postProperties: NotionProperty[] = [
   { name: 'title', type: 'title' },
-  // { name: 'imageUrl', type: 'url' },
-  { name: 'coverImage', type: 'files' },
   { name: 'description', type: 'rich_text' },
   { name: 'publishedAt', type: 'date' },
   { name: 'isDraft', type: 'checkbox' },
@@ -117,6 +117,12 @@ async function generatePosts() {
       r2FileId: 'cover_image',
     })
 
+    const ogImageUrl = await maybeUploadPostOGImage({
+      // Assuming the title is the first property.
+      title: extractedProperties[0] as string,
+      slug,
+    })
+
     const frontmatter = toFrontmatterString(
       Object.fromEntries([
         ...(emoji ? [['emoji', emoji]] : []),
@@ -124,6 +130,7 @@ async function generatePosts() {
           const propertyName = postProperties[index].name
           return [propertyName, value]
         }),
+        ['ogImage', ogImageUrl],
       ])
     )
     const markdownContent = await markdownContentFromNotionPage(response.id, [
@@ -138,6 +145,23 @@ async function generatePosts() {
     console.log(`✅ (${index + 1}/${length}) Generated ${filePath}`)
   }
   console.log(`✅ Generated all (${length}) markdown files`)
+}
+
+async function maybeUploadPostOGImage(param: {
+  title: string
+  slug: string
+}): Promise<string> {
+  const extension = 'png'
+  const ogImageBuffer = await generateOGImage(param.title, extension)
+  const ogImageUrl = await maybeUploadImageToR2({
+    r2PathSegments: ['posts', param.slug],
+    image: {
+      buffer: ogImageBuffer,
+      extension,
+    },
+    fileId: 'og-image',
+  })
+  return ogImageUrl
 }
 
 ;(async () => {

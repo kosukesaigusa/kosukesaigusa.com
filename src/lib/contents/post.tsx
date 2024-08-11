@@ -17,7 +17,7 @@ type Post = {
   title: string
   publishedAt: string
   description: string
-  coverImage?: string
+  ogImage?: string
   body: string
 }
 
@@ -51,7 +51,7 @@ export const getPosts = async () => {
         title: data.title,
         publishedAt: data.publishedAt,
         description: data.description,
-        coverImage: data.coverImage,
+        ogImage: data.ogImage,
         body: result.toString(),
       }
       return post

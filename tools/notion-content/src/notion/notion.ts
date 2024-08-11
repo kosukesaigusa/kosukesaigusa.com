@@ -1,7 +1,7 @@
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import { MdBlock } from 'notion-to-md/build/types'
 import { toMarkdownImageLink, urlFromMarkdownImageLink } from '../markdown'
-import { getR2ImageUrl } from '../r2'
+import { maybeUploadImageToR2 } from '../r2'
 import { n2m } from './config'
 
 export type NotionProperty = {
@@ -35,9 +35,9 @@ export async function parseNotionProperties(
       extractedProperties.push(extractLinkValue(param.response, property))
     } else if (notionFileProperties.includes(property.type)) {
       const imageUrl = extractFileValue(param.response, property)
-      const r2ImageUrl = await getR2ImageUrl({
+      const r2ImageUrl = await maybeUploadImageToR2({
         r2PathSegments: param.r2PathSegments,
-        imageUrl,
+        image: imageUrl,
         fileId: param.r2FileId,
       })
       extractedProperties.push(r2ImageUrl)
@@ -67,9 +67,9 @@ export async function markdownContentFromNotionPage(
   for (const block of mdBlocks) {
     if (block.type === 'image') {
       const url = urlFromMarkdownImageLink(block.parent)
-      const r2ImageUrl = await getR2ImageUrl({
+      const r2ImageUrl = await maybeUploadImageToR2({
         r2PathSegments: r2PathSegments,
-        imageUrl: url,
+        image: url,
         fileId: block.blockId,
       })
       const updatedBlock = {

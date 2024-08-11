@@ -174,7 +174,7 @@ app.get(
       title: siteName + ` - ${post.title}`,
       url: baseURL + '/posts/' + post.slug,
       description: post.description,
-      ogImage: post.coverImage,
+      ogImage: post.ogImage,
     }
     return c.render(
       <Layout metadata={metadata}>
