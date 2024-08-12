@@ -66,6 +66,48 @@ const postListCSS = css`
     height: 100%;
     object-fit: cover; /* Adjust the image to fill the container */
   }
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .post-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+  .post-card .emoji-container {
+    background-color: #f0f8ff;
+    padding: 24px;
+    text-align: center;
+  }
+  .post-card .emoji {
+    font-size: 48px;
+  }
+  .post-card .content {
+    background-color: white;
+    padding: 16px;
+  }
+  .post-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+  }
+  .post-card .post-meta {
+    font-size: 14px;
+    color: #595959;
+    margin-bottom: 8px;
+  }
+  .post-card .post-description {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .post-card a {
+    color: #0066cc;
+    text-decoration: none;
+  }
+  .post-card a:hover {
+    text-decoration: underline;
+  }
 `
 
 app.get('/', (c) => {
@@ -131,6 +173,37 @@ app.get('/', (c) => {
             </ul>
           </>
         )}
+      </div>
+    </Layout>
+  )
+})
+
+app.get('/posts', (c) => {
+  const metadata = {
+    title: `${siteName} - 記事一覧`,
+    url: `${baseURL}/posts`,
+    description: '記事一覧ページ',
+    ogImage: 'https://cdn.kosukesaigusa.com/posts/og-image.webp',
+  }
+  return c.render(
+    <Layout metadata={metadata}>
+      <div class={postListCSS}>
+        <h1>記事一覧</h1>
+        <div class="post-list">
+          {posts.map((post) => (
+            <div class="post-card">
+              <div class="emoji-container">
+                <div class="emoji">{post.emoji || '📝'}</div>
+              </div>
+              <div class="content">
+                <h3>{post.title}</h3>
+                <div class="post-meta">{post.publishedAt}</div>
+                <div class="post-description">{post.description}</div>
+                <a href={`/posts/${post.slug}`}>続きを読む</a>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </Layout>
   )

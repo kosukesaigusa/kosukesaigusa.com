@@ -33,6 +33,12 @@ export const Header: FC = (props) => {
         <a className={path === '/' ? 'active' : ''} href="/">
           Home
         </a>
+        <a className={path === '/contact' ? 'active' : ''} href="/contact">
+          Contact
+        </a>
+        <a className={path === '/posts' ? 'active' : ''} href="/posts">
+          Posts
+        </a>
         <a
           href="https://github.com/kosukesaigusa"
           target="_blank"
