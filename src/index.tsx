@@ -9,26 +9,13 @@ import { getAboutThisSite } from './lib/contents/aboutThisSite'
 import { getContact } from './lib/contents/contact'
 import { getPosts } from './lib/contents/post'
 import { getFeaturedTalks, getTalks } from './lib/contents/talk'
+import { defaultMetadata } from './lib/metadata'
 
 const app = new Hono()
 
 const [aboutThisSite, featuredTalks, talks, posts, contact] = await Promise.all(
   [getAboutThisSite(), getFeaturedTalks(), getTalks(), getPosts(), getContact()]
 )
-
-type Metadata = {
-  title: string
-  url: string
-  description: string
-  ogImage?: string
-}
-
-let metadata: Metadata = {
-  title: siteName,
-  url: baseURL,
-  description: 'Kosuke Saigusa (@kosukesaigusa) のプロフィールページです。',
-  ogImage: 'https://cdn.kosukesaigusa.com/assets/profile_1260_630.jpg',
-}
 
 app.use('*', serveStatic({ root: 'public' }))
 
@@ -82,14 +69,8 @@ const postListCSS = css`
 `
 
 app.get('/', (c) => {
-  metadata = {
-    title: siteName,
-    url: baseURL,
-    description: 'Kosuke Saigusa (@kosukesaigusa) のプロフィールページです。',
-    ogImage: 'https://cdn.kosukesaigusa.com/assets/profile_1260_630.jpg',
-  }
   return c.render(
-    <Layout metadata={metadata}>
+    <Layout metadata={defaultMetadata}>
       <div class={postListCSS}>
         <h2>このページについて</h2>
         <div dangerouslySetInnerHTML={{ __html: aboutThisSite }}></div>
@@ -170,7 +151,7 @@ app.get(
     if (!post) {
       return c.redirect('/404')
     }
-    metadata = {
+    const metadata = {
       title: siteName + ` - ${post.title}`,
       url: baseURL + '/posts/' + post.slug,
       description: post.description,
@@ -188,7 +169,7 @@ app.get(
 )
 
 app.get('/contact', async (c) => {
-  metadata = {
+  const metadata = {
     title: siteName + ' - お仕事の依頼',
     url: baseURL + '/contact',
     description: 'お仕事の依頼',
