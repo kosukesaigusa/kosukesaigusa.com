@@ -18,16 +18,19 @@ jobs:
         uses: oven-sh/setup-bun@v1
 
       - name: Sync r2-image-worker secrets
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: tools/r2-image-worker
+          wranglerVersion: '4'
+          command: deploy --minify ./src/index.ts
+          secrets: |
+            USER
+            PASS
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          IMAGE_WORKER_USER: ${{ secrets.IMAGE_WORKER_USER }}
-          IMAGE_WORKER_PASS: ${{ secrets.IMAGE_WORKER_PASS }}
-        run: |
-          bun i
-          printf '%s' "$IMAGE_WORKER_USER" | bunx wrangler secret put USER
-          printf '%s' "$IMAGE_WORKER_PASS" | bunx wrangler secret put PASS
-        working-directory: ./tools/r2-image-worker
+          USER: ${{ secrets.IMAGE_WORKER_USER }}
+          PASS: ${{ secrets.IMAGE_WORKER_PASS }}
 
       - name: Generate markdowns
         env:
@@ -60,7 +63,7 @@ jobs:
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
-          wranglerVersion: '3'
+          wranglerVersion: '4'
 
       - name: Add publish URL as commit status
         uses: actions/github-script@v6
