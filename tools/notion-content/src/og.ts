@@ -6,7 +6,12 @@ export async function generateOGImage(
   title: string,
   extension: 'png' | 'webp',
 ): Promise<Uint8Array> {
-  const browser = await puppeteer.launch()
+  const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true'
+  const browser = await puppeteer.launch(
+    isCI
+      ? { args: ['--no-sandbox', '--disable-setuid-sandbox'] }
+      : undefined,
+  )
   const page = await browser.newPage()
   await page.setViewport({ width: 1200, height: 630 })
 
