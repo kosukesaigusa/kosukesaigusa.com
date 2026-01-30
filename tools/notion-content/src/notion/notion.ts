@@ -1,5 +1,5 @@
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
-import { MdBlock } from 'notion-to-md/build/types'
+import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
+import type { MdBlock } from 'notion-to-md/build/types'
 import { toMarkdownImageLink, urlFromMarkdownImageLink } from '../markdown'
 import { maybeUploadImageToR2 } from '../r2'
 import { n2m } from './config'
@@ -14,7 +14,7 @@ export function extractEmoji(response: PageObjectResponse): string | undefined {
 }
 
 export function extractSlug(response: PageObjectResponse): string {
-  return (response.properties['slug'] as NotionRichText).rich_text[0].plain_text
+  return (response.properties.slug as NotionRichText).rich_text[0].plain_text
 }
 
 type ParseNotionPropertiesParam = {
@@ -25,7 +25,7 @@ type ParseNotionPropertiesParam = {
 }
 
 export async function parseNotionProperties(
-  param: ParseNotionPropertiesParam
+  param: ParseNotionPropertiesParam,
 ): Promise<(string | boolean)[]> {
   const extractedProperties: (string | boolean)[] = []
   for (const property of param.properties) {
@@ -43,7 +43,7 @@ export async function parseNotionProperties(
       extractedProperties.push(r2ImageUrl)
     } else if (notionDateProperties.includes(property.type)) {
       extractedProperties.push(
-        extractDateValue(param.response, property).toISOString().split('T')[0]
+        extractDateValue(param.response, property).toISOString().split('T')[0],
       )
     } else if (notionBooleanProperties.includes(property.type)) {
       extractedProperties.push(extractBooleanValue(param.response, property))
@@ -51,7 +51,7 @@ export async function parseNotionProperties(
       extractedProperties.push(extractSelectValue(param.response, property))
     } else {
       throw new Error(
-        `Invalid property type: ${property.type} (${property.type})`
+        `Invalid property type: ${property.type} (${property.type})`,
       )
     }
   }
@@ -60,7 +60,7 @@ export async function parseNotionProperties(
 
 export async function markdownContentFromNotionPage(
   pageId: string,
-  r2PathSegments: string[]
+  r2PathSegments: string[],
 ): Promise<string> {
   const mdBlocks = await n2m.pageToMarkdown(pageId)
   const blocks: MdBlock[] = []
@@ -141,27 +141,27 @@ type NotionSelectValueType =
   (typeof notionSelectValue)[keyof typeof notionSelectValue]
 
 const notionStringProperties = Object.values(notionStringValue).map(
-  (e) => e as string
+  (e) => e as string,
 )
 
 const notionLinkProperties = Object.values(notionLinkValue).map(
-  (e) => e as string
+  (e) => e as string,
 )
 
 const notionFileProperties = Object.values(notionFileValue).map(
-  (e) => e as string
+  (e) => e as string,
 )
 
 const notionDateProperties = Object.values(notionDateValue).map(
-  (e) => e as string
+  (e) => e as string,
 )
 
 const notionBooleanProperties = Object.values(notionBooleanValue).map(
-  (e) => e as string
+  (e) => e as string,
 )
 
 const notionSelectProperties = Object.values(notionSelectValue).map(
-  (e) => e as string
+  (e) => e as string,
 )
 
 type NotionTitle = {
@@ -205,7 +205,7 @@ type NotionSelect = {
 
 function extractStringValue(
   response: PageObjectResponse,
-  property: NotionProperty
+  property: NotionProperty,
 ): string {
   const key = property.name
   if (property.type === 'title') {
@@ -226,7 +226,7 @@ function extractStringValue(
 
 function extractLinkValue(
   response: PageObjectResponse,
-  property: NotionProperty
+  property: NotionProperty,
 ): string {
   const key = property.name
   if (property.type === 'url') {
@@ -237,7 +237,7 @@ function extractLinkValue(
 
 function extractFileValue(
   response: PageObjectResponse,
-  property: NotionProperty
+  property: NotionProperty,
 ): string {
   const key = property.name
   if (property.type === 'files') {
@@ -248,12 +248,12 @@ function extractFileValue(
 
 function extractDateValue(
   response: PageObjectResponse,
-  property: NotionProperty
+  property: NotionProperty,
 ): Date {
   const key = property.name
   if (property.type === 'date') {
     return new Date(
-      (response.properties[key] as NotionDate).date.start as string
+      (response.properties[key] as NotionDate).date.start as string,
     )
   }
   throw new Error('Invalid property type')
@@ -261,7 +261,7 @@ function extractDateValue(
 
 function extractBooleanValue(
   response: PageObjectResponse,
-  property: NotionProperty
+  property: NotionProperty,
 ): boolean {
   const key = property.name
   if (property.type === 'checkbox') {
@@ -272,7 +272,7 @@ function extractBooleanValue(
 
 function extractSelectValue(
   response: PageObjectResponse,
-  property: NotionProperty
+  property: NotionProperty,
 ): string {
   const key = property.name
   if (property.type === 'select') {

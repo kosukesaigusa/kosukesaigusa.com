@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import { talksDir } from '../constants'
 
 type FeaturedTalk = {
@@ -25,7 +25,7 @@ type Talk = {
 export async function getFeaturedTalks(): Promise<FeaturedTalk[]> {
   const talks = await getTalks()
   const featuredTalks = talks.filter(
-    (talk) => talk.isFeatured && talk.imageUrl !== null
+    (talk) => talk.isFeatured && talk.imageUrl !== null,
   )
   return featuredTalks.map((featuredTalk) => ({
     emoji: featuredTalk.emoji,

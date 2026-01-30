@@ -15,7 +15,7 @@ type Data = {
   dir?: string
 }
 
-const maxAge = 60 * 60 * 24 * 30
+const _maxAge = 60 * 60 * 24 * 30
 
 const app = new Hono<{ Bindings: Bindings }>()
 
@@ -38,7 +38,7 @@ app.put('/upload', async (c) => {
   if (!type) return c.notFound()
 
   const uint8Array = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
-  const key = dir + fileId + '.' + type?.suffix
+  const key = `${dir + fileId}.${type?.suffix}`
   await c.env.BUCKET.put(key, uint8Array, {
     httpMetadata: { contentType: type.mimeType },
   })

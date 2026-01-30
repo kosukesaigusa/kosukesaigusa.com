@@ -1,0 +1,9 @@
+## Local variables for `wrangler dev`.
+## Copy to `.dev.vars` and set real values.
+##
+## NOTE: `.dev.vars` must NOT be committed.
+##
+## USER: Basic auth username.
+USER=kosukesaigusa
+## PASS: Basic auth password.
+PASS=replace_me_with_a_strong_password

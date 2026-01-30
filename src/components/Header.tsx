@@ -1,33 +1,10 @@
-import { css } from 'hono/css'
-import { FC } from 'hono/jsx'
+import type { FC } from 'hono/jsx'
 import { siteName } from '../lib/constants'
 
 export const Header: FC = (props) => {
-  const headerCSS = css`
-    header {
-      margin: 0em 0 2em;
-    }
-    nav a {
-      margin-right: 1em;
-    }
-    nav a:last-child {
-      margin-right: 0;
-    }
-    h2 {
-      margin: 0.5em 0;
-    }
-    a {
-      display: inline-block;
-      text-decoration: none;
-    }
-    a.active {
-      font-weight: bolder;
-      text-decoration: underline;
-    }
-  `
   const path = new URL(props.metadata.url).pathname
   return (
-    <header class={headerCSS}>
+    <header>
       <h2>{siteName}</h2>
       <nav>
         <a className={path === '/' ? 'active' : ''} href="/">

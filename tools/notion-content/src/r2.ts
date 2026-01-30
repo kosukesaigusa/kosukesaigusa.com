@@ -63,7 +63,7 @@ async function uploadImageToR2(param: Param): Promise<string> {
   })
   if (result.status !== 200) {
     throw new Error(
-      `Failed to upload image to R2 image worker (status: ${result.status})`
+      `Failed to upload image to R2 image worker (status: ${result.status})`,
     )
   }
   const key = [
@@ -82,16 +82,16 @@ async function encodeImage(image: Image): Promise<string> {
     const base64data = btoa(
       new Uint8Array(arrayBuffer).reduce(
         (data, byte) => data + String.fromCharCode(byte),
-        ''
-      )
+        '',
+      ),
     )
     return base64data
   }
   return btoa(
     new Uint8Array(image.buffer).reduce(
       (data, byte) => data + String.fromCharCode(byte),
-      ''
-    )
+      '',
+    ),
   )
 }
 
@@ -101,7 +101,7 @@ function extractExtensionFromImage(image: Image): string {
     const extensionMatch = imageUrl.match(/\.([a-zA-Z0-9]+)(?:\?|$)/)
     if (!extensionMatch)
       throw new Error(
-        `Failed to extract image extension from given imageUrl: ${imageUrl}`
+        `Failed to extract image extension from given imageUrl: ${imageUrl}`,
       )
     return extensionMatch[1]
   }

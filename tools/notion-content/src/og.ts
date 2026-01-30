@@ -1,10 +1,10 @@
-import fs from 'fs/promises'
-import path from 'path'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import puppeteer from 'puppeteer'
 
 export async function generateOGImage(
   title: string,
-  extension: 'png' | 'webp'
+  extension: 'png' | 'webp',
 ): Promise<Uint8Array> {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
@@ -94,7 +94,7 @@ async function main() {
 
   await fs.writeFile(
     path.join(__dirname, '..', `og-image.${extension}`),
-    imageBuffer
+    imageBuffer,
   )
 
   console.log('OG image generated successfully.')

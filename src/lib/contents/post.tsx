@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import rehypeStringify from 'rehype-stringify'
 import { remark } from 'remark'
 import remarkExpressiveCode from 'remark-expressive-code'
@@ -55,7 +55,7 @@ export const getPosts = async () => {
         body: result.toString(),
       }
       return post
-    })
+    }),
   )
 
   posts.sort((a, b) => {

@@ -1,4 +1,4 @@
-import {
+import type {
   QueryDatabaseParameters,
   QueryDatabaseResponse,
 } from '@notionhq/client/build/src/api-endpoints'
@@ -14,7 +14,7 @@ export type DatabaseKey = keyof typeof databaseIds
 
 export function queryNotionDatabase(
   key: DatabaseKey,
-  args?: Omit<QueryDatabaseParameters, 'database_id'>
+  args?: Omit<QueryDatabaseParameters, 'database_id'>,
 ): Promise<QueryDatabaseResponse> {
   return notionClient.databases.query({
     database_id: databaseId(key),

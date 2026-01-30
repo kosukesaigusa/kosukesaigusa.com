@@ -17,15 +17,29 @@ jobs:
       - name: Set up bun
         uses: oven-sh/setup-bun@v1
 
+      - name: Sync r2-image-worker secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          IMAGE_WORKER_USER: ${{ secrets.IMAGE_WORKER_USER }}
+          IMAGE_WORKER_PASS: ${{ secrets.IMAGE_WORKER_PASS }}
+        run: |
+          bun i
+          printf '%s' "$IMAGE_WORKER_USER" | bunx wrangler secret put USER
+          printf '%s' "$IMAGE_WORKER_PASS" | bunx wrangler secret put PASS
+        working-directory: ./tools/r2-image-worker
+
       - name: Generate markdowns
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_CONTENTS_DB_ID: ${{ secrets.NOTION_CONTENTS_DB_ID }}
           NOTION_POSTS_DB_ID: ${{ secrets.NOTION_POSTS_DB_ID }}
           NOTION_TALKS_DB_ID: ${{ secrets.NOTION_TALKS_DB_ID }}
-          IMAGE_WORKER_AUTH_TOKEN: ${{ secrets.IMAGE_WORKER_AUTH_TOKEN }}
+          IMAGE_WORKER_USER: ${{ secrets.IMAGE_WORKER_USER }}
+          IMAGE_WORKER_PASS: ${{ secrets.IMAGE_WORKER_PASS }}
           IMAGE_WORKER_BASE_URL: ${{ secrets.IMAGE_WORKER_BASE_URL }}
         run: |
+          export IMAGE_WORKER_AUTH_TOKEN="$(printf '%s' "${IMAGE_WORKER_USER}:${IMAGE_WORKER_PASS}" | base64 -w 0)"
           bun i
           bun run generate
         working-directory: ./tools/notion-content

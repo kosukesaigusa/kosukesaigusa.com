@@ -16,7 +16,7 @@ export function toMarkdownImageLink(param: Param) {
 }
 
 export function toFrontmatterString(
-  frontmatter: Record<string, string | boolean>
+  frontmatter: Record<string, string | boolean>,
 ) {
   return Object.entries(frontmatter)
     .map(([key, value]) => {

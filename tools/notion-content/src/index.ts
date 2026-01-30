@@ -1,13 +1,13 @@
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
-import fs from 'fs'
-import path, { dirname } from 'path'
+import fs from 'node:fs'
+import path, { dirname } from 'node:path'
+import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import { toFrontmatterString } from './markdown'
 import { queryNotionDatabase } from './notion/db'
 import {
-  NotionProperty,
   extractEmoji,
   extractSlug,
   markdownContentFromNotionPage,
+  type NotionProperty,
   parseNotionProperties,
 } from './notion/notion'
 import { generateOGImage } from './og'
@@ -37,7 +37,7 @@ async function generateContents() {
 
     const markdownContent = await markdownContentFromNotionPage(
       pageObjectResponse.id,
-      ['contents', key]
+      ['contents', key],
     )
 
     const filePath = path.join(projectRoot, 'contents', `${key}.md`)
@@ -131,7 +131,7 @@ async function generatePosts() {
           return [propertyName, value]
         }),
         ['ogImage', ogImageUrl],
-      ])
+      ]),
     )
     const markdownContent = await markdownContentFromNotionPage(response.id, [
       'posts',

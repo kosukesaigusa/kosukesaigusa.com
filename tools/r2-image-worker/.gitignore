@@ -4,5 +4,7 @@ worker
 package-lock.json
 yarn.lock
 .cargo-ok
-wrangler.toml
 yarn-error.log
+
+# Local secrets for wrangler dev.
+.dev.vars
