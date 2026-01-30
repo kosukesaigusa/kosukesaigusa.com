@@ -23,7 +23,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: tools/r2-image-worker
-          wranglerVersion: '4'
+          wranglerVersion: '4.61.1'
           command: deploy --minify ./src/index.ts
           secrets: |
             USER
@@ -63,7 +63,7 @@ jobs:
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
-          wranglerVersion: '4'
+          wranglerVersion: '4.61.1'
 
       - name: Add publish URL as commit status
         uses: actions/github-script@v6
