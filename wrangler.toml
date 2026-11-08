@@ -1,0 +1,10 @@
+name = "kosukesaigusa-com"
+compatibility_date = "2026-10-30"
+
+[[routes]]
+pattern = "kosukesaigusa.com"
+custom_domain = true
+
+[assets]
+directory = "./public"
+not_found_handling = "404-page"
