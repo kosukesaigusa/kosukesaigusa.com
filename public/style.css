@@ -235,11 +235,6 @@ p {
   font-size: 15px;
 }
 
-.publications .image-credit {
-  margin-top: 6px;
-  font-size: 12px;
-}
-
 .site-footer {
   display: flex;
   gap: 8px;
